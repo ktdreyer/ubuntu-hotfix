@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Quick-and-dirty script to compose a hotfix for Ubuntu.
+#
+# Copyright (c) 2016 Red Hat, Inc.
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+
+set -ex
+
+# First arg should be a https://bugzilla.redhat.com/ ID number
+# For example 1378549
+[ -z $1 ] && echo "provide a bz # argument" && exit 1
+# Eg. "1234" or "1234-2"
+BZ=$1
+
+# Second arg should be a build NVR in chacra
+# For example ceph_0.94.9-4.bz1378549redhat2
+[ -z $2 ] && echo "provide a Ubuntu build NVR argument" && exit 1
+NVR=$2
+
+# Default to the "trusty" distro.
+DISTRO=trusty
+[ -z $3 ] || DISTRO=$3
+
+mkdir -p hotfix-bz$BZ
+pushd hotfix-bz$BZ
+
+REPO=repo-bz$BZ
+mkdir -p $REPO
+pushd $REPO
+mkdir -p conf
+cat << EOF > conf/distributions
+Codename: $DISTRO
+Suite: stable
+Components: main
+Architectures: amd64 i386
+Origin: Red Hat, Inc.
+Description: Ceph distributed file system
+DebIndices: Packages Release . .gz .bz2
+DscIndices: Sources Release .gz .bz2
+Contents: .gz .bz2
+EOF
+popd # $REPO
+
+rhcephpkg download $NVR
+# Clean up unneeded files to keep the size down
+rm *-dev*.deb
+rm *-dbg*.deb
+rm libcephfs-java*.deb
+rm libcephfs-jni*.deb
+
+reprepro --ask-passphrase -b $REPO \
+  -C main \
+  --ignore=wrongdistribution \
+  --ignore=wrongversion \
+  --ignore=undefinedtarget \
+  includedeb $DISTRO *.deb
+
+rm *.deb
+
+popd # hotfix-bz$BZ
+
+TARBALL=hotfix-bz$BZ.tar.gz
+tar czf $TARBALL hotfix-bz$BZ
+sha256sum $TARBALL > ${TARBALL}.SHA256SUM
