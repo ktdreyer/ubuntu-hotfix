@@ -20,4 +20,4 @@ Clone from Git and run it::
   cd hotfix-ubuntu
   ./hotfix-ubuntu <bug-id> <build-nvr>
 
-This will create a "hotfix-bzXXXX.tar.gz" in your local working directory.
+This will create a ``hotfix-bzXXXX.tar.gz`` in your local working directory.
