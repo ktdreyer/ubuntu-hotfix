@@ -4,10 +4,10 @@
 A tool to package up hotfixes for Red Hat Ceph Storage for Ubuntu.
 
 This tool uses `rhcephpkg <https://github.com/red-hat-storage/rhcephpkg>`_ to
-download hotfix builds from Red Hat's build storage system (`rhcephpkg
-<https://github.com/red-hat-storage/rhcephpkg>`_), generate an apt repository
-with those builds (with `reprepro <http://mirrorer.alioth.debian.org/>`_), and
-assemble everything into a single tarball for customers.
+download hotfix builds from Red Hat's build storage system (`chacra
+<https://github.com/ceph/chacra>`_), generate a local apt repository with those
+builds (using `reprepro <http://mirrorer.alioth.debian.org/>`_), and assemble
+everything into a single tarball for customers.
 
 Example
 =======
