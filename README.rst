@@ -131,29 +131,29 @@ Full compose for a hotfix
 
 Instead of using this ``hotfix-ubuntu`` script, you may want to generate a full compose.
 
- #. Enter the rhcs-metadata Git clone, and ensure your testing branch is
-    up-to-date::
+#. Enter the rhcs-metadata Git clone, and ensure your testing branch is
+   up-to-date::
 
-      cd ~/dev/rhcs-metadata
-      git checkout testing
-      git fetch && git reset --hard origin/testing
+     cd ~/dev/rhcs-metadata
+     git checkout testing
+     git fetch && git reset --hard origin/testing
 
 #. We are basing this hotfix on top of ceph-2.2, so let's copy that
    configuration::
 
-      cp ceph-2-ubuntu.conf ceph-2.2-ubuntu-hotfix-bz1445891.conf
-      git add ceph-2.2-ubuntu-hotfix-bz1445891.conf
+     cp ceph-2-ubuntu.conf ceph-2.2-ubuntu-hotfix-bz1445891.conf
+     git add ceph-2.2-ubuntu-hotfix-bz1445891.conf
 
-#. Determine the builds list upon which to base this hotfix.
-   Look at all the builds lists and determine which one would be
-   appropriate. In our case, we want to start from the build lists
-   that most-recently shipped to customers.
+#. Determine the builds list upon which to base this hotfix.  Look at
+   all the builds lists and determine which one would be appropriate. In
+   our case, we want to start from the build lists that most-recently
+   shipped to customers.
 
 #. Create your new hotfix build lists::
 
-      cp builds-ceph-2.2-27750-trusty.txt builds-ceph-2.2-hotfix-bz1445891-trusty.txt
-      cp builds-ceph-2.2-27750-xenial.txt builds-ceph-2.2-hotfix-bz1445891-xenial.txt
-      git add builds-ceph-2.2-hotfix-bz1445891-{trusty,xenial}.txt
+     cp builds-ceph-2.2-27750-trusty.txt builds-ceph-2.2-hotfix-bz1445891-trusty.txt
+     cp builds-ceph-2.2-27750-xenial.txt builds-ceph-2.2-hotfix-bz1445891-xenial.txt
+     git add builds-ceph-2.2-hotfix-bz1445891-{trusty,xenial}.txt
 
 #. Set ``product_version`` in
    ``ceph-2.2-ubuntu-hotfix-bz1445891.conf`` from ``2`` to ``2.2``
