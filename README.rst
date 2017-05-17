@@ -160,6 +160,13 @@ Instead of using this ``hotfix-ubuntu`` script, you may want to generate a full 
 
 #. Set the new ``builds`` lists text files in
    ``ceph-2.2-ubuntu-hotfix-bz1445891.conf``.
+   
+#. Edit the new hotfix build lists to have the hotfix NVR 
+   (e.g.: ceph_10.2.5-28.1.bz1445891redhat1xenial) and remove the 
+   existing ceph NVR::
+
+     vi builds-ceph-2.2-hotfix-bz1445891-trusty.txt
+     vi builds-ceph-2.2-hotfix-bz1445891-xenial.txt
 
 #. When the Jenkins builds are done and present in chacra, commit
    everything and push to rhcs-metadata.git's origin::
