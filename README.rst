@@ -99,10 +99,6 @@ This guide walks through the hotfix patch handling process for Ubuntu.
    from ``10.2.5-28redhat1`` to ``10.2.5-29redhat1``. Edit
    ``debian/changelog`` to manually set the Version-Release to a hotfix
    value instead.
-
-   Also add the "dist" string suffix here (``xenial``), since this is going
-   to be a ``localbuild`` rather than in Jenkins ... although eventually I want
-   to get rid of this part, and make Jenkins handle this properly.
    ::
 
      10.2.5-28.1.bz1445891redhat1xenial
@@ -117,6 +113,68 @@ This guide walks through the hotfix patch handling process for Ubuntu.
 
      git commit -a --amend
 
-#. Do a local build::
+#. Push your new hotfix change to the remote::
 
-     rhcephpkg localbuild --dist xenial
+     git push origin ceph-2.2-ubuntu-hotfix-bz1445891
+
+#. Do a build in Jenkins::
+
+     rhcephpkg build
+
+At this point you can use the ``hotfix-ubuntu`` script in this repository in
+order to generate a small tarball that contains the fix, or else you can
+generate a full compose (pros: looks similar to the released product. supports
+multi-distros. cons: more effort and disk space.)
+
+Full compose for a hotfix
+=========================
+
+Instead of using this ``hotfix-ubuntu`` script, you may want to generate a full compose.
+
+ #. Enter the rhcs-metadata Git clone, and ensure your testing branch is
+    up-to-date::
+
+      cd ~/dev/rhcs-metadata
+      git checkout testing
+      git fetch && git reset --hard origin/testing
+
+#. We are basing this hotfix on top of ceph-2.2, so let's copy that
+   configuration::
+
+      cp ceph-2-ubuntu.conf ceph-2.2-ubuntu-hotfix-bz1445891.conf
+      git add ceph-2.2-ubuntu-hotfix-bz1445891.conf
+
+#. Determine the builds list upon which to base this hotfix.
+   Look at all the builds lists and determine which one would be
+   appropriate. In our case, we want to start from the build lists
+   that most-recently shipped to customers.
+
+#. Create your new hotfix build lists::
+
+      cp builds-ceph-2.2-27750-trusty.txt builds-ceph-2.2-hotfix-bz1445891-trusty.txt
+      cp builds-ceph-2.2-27750-xenial.txt builds-ceph-2.2-hotfix-bz1445891-xenial.txt
+      git add builds-ceph-2.2-hotfix-bz1445891-{trusty,xenial}.txt
+
+#. Set ``product_version`` in
+   ``ceph-2.2-ubuntu-hotfix-bz1445891.conf`` from ``2`` to ``2.2``
+
+#. Set the new ``builds`` lists text files in
+   ``ceph-2.2-ubuntu-hotfix-bz1445891.conf``.
+
+#. When the Jenkins builds are done and present in chacra, commit
+   everything and push to rhcs-metadata.git's origin::
+
+     git commit -a
+     git push origin testing
+
+#. Jenkins will not automatically merge "testing" to "master", so do
+   that by hand::
+
+     git checkout master
+     git merge tesing --ff-only
+     git push origin master
+
+#. Open a ticket with rel-eng to generate and beta-sign this compose. Be
+   sure to mention the exact .conf filename
+   (``ceph-2.2-ubuntu-hotfix-bz1445891.conf``) in the ticket.
+   https://projects.engineering.redhat.com/projects/RCM/issues
