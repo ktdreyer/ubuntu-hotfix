@@ -28,8 +28,8 @@ BZ=$1
 [ -z $2 ] && echo "provide a Ubuntu build NVR argument" && exit 1
 NVR=$2
 
-# Default to the "trusty" distro.
-DISTRO=trusty
+# Default to the "xenial" distro.
+DISTRO=xenial
 [ -z $3 ] || DISTRO=$3
 
 mkdir -p hotfix-bz$BZ
