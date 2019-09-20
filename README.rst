@@ -22,6 +22,11 @@ Clone from Git and run it::
 
 This will create a ``hotfix-bzXXXX.tar.gz`` in your local working directory.
 
+One simple way to set up the repo in the tarball is to unpack it somewhere, and then create a file called ``/etc/apt/sources.list.d/hotfix-bzXXXX.list`` with just one line:
+
+  deb [trusted=yes] file:///path/to/hotfix-bzXXXX/repo-bzXXXX/ xenial main
+
+
 Patch handling process
 ======================
 
